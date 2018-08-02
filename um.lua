@@ -20,7 +20,11 @@ local iFinger = 1
 arrayColection[1] = {}
 
 function dec2Bin(dec,bc)
-  if dec == 0 then return Z8 end
+  if dec == 0 and bc == nil then 
+    return Z8 
+  elseif dec == 0 and bc == 32 then
+    return Z32
+  end
   bitCount = bc or 8
   local bin = ''
   while true do
@@ -129,14 +133,16 @@ while true do
   --3 Addition
   if opCode == '0011' then
     if debugOut then print("Addition") end
-    GPR[addressA] = dec2Bin(bin2Dec(GPR[addressB]) + bin2Dec(GPR[addressC]),32) 
+    dec = bin2Dec(GPR[addressB]) + bin2Dec(GPR[addressC])
+    GPR[addressA] = dec2Bin((dec - math.floor(dec/2^32)*(2^32)),32) 
     a = 1
   end
 
   --4 Multiplication
   if opCode == '0100' then
     if debugOut then print("Multiplication") end
-    GPR[addressA] = dec2Bin(bin2Dec(GPR[addressB]) * bin2Dec(GPR[addressC]),32) 
+    dec = bin2Dec(GPR[addressB]) * bin2Dec(GPR[addressC])
+    GPR[addressA] = dec2Bin((dec - math.floor(dec/2^32)*(2^32)),32) 
     a = 1
   end
 
@@ -146,7 +152,10 @@ while true do
     if bin2Dec(GPR[addressC]) == 0 then 
       break
     end
-    GPR[addressA] = dec2Bin(bin2Dec(GPR[addressB]) / bin2Dec(GPR[addressC]),32) 
+    dec = bin2Dec(GPR[addressB]) / bin2Dec(GPR[addressC])
+
+    GPR[addressA] = dec2Bin(dec,32)
+
     a = 1
   end
 
@@ -204,7 +213,7 @@ while true do
   if opCode == '1100' then
     if debugOut then print("Load Program") end
     arrayColection[1] = arrayColection[bin2Dec(GPR[addressB])+1]
-    iFinger =bin2Dec(GPR[addressC]) + 1
+    iFinger =bin2Dec(GPR[addressC])-- + 1
   end
 
   --13 Orthography
