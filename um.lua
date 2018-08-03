@@ -153,7 +153,10 @@ while true do
       break
     end
     dec = bin2Dec(GPR[addressB]) / bin2Dec(GPR[addressC])
-
+    if dec < 1 then
+      dec = 0
+    end
+    
     GPR[addressA] = dec2Bin(dec,32)
 
     a = 1
