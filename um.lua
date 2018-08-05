@@ -17,7 +17,7 @@ local arrayColection = {}
 -- instruction finger
 local iFinger = 1
 
-arrayColection[1] = {}
+arrayColection[0] = {}
 
 function dec2Bin(dec,bc)
   if dec == 0 and bc == nil then 
@@ -52,6 +52,7 @@ function zPad(bin,bc,rev)
 end
 
 function bin2Dec(bin)
+  if bin == nil then return 0 end
   if bin == Z32 then return 0 end
   local dec = 0
   local j = 0
@@ -89,7 +90,7 @@ function loadUM(mFileName)
     allBits[i] = table.concat(b32)--:reverse()
   end
 
-  arrayColection[1] = allBits
+  arrayColection[0] = allBits
   a = 1
 end
 
@@ -102,11 +103,13 @@ local addressB = 0
 local addressC = 0
 
 while true do
-  cur32bit = arrayColection[1][iFinger]
+  cur32bit = arrayColection[0][iFinger]
   opCode = cur32bit:sub(1,4)
   addressA = cur32bit:sub(24,26)
   addressB = cur32bit:sub(27,29)
   addressC = cur32bit:sub(30,32)
+
+
 
   -- 0 Conditional Move
   if opCode == '0000' then
@@ -116,18 +119,19 @@ while true do
     end
     a = 1
   end
+  
   -- 1 Array Index
   if opCode == '0001' then
     if debugOut then print("Array Index") end
-    al = #arrayColection[1]
-    GPR[addressA] = arrayColection[bin2Dec(GPR[addressB])+1][bin2Dec(GPR[addressC])+1]
+    al = #arrayColection
+    GPR[addressA] = arrayColection[bin2Dec(GPR[addressB])][bin2Dec(GPR[addressC])+1]
     a = 1
   end
 
   -- 2 Array Amendment
   if opCode == '0010' then
     if debugOut then print("Array Amendment") end
-    arrayColection[bin2Dec(GPR[addressA])+1][bin2Dec(GPR[addressB])+1] = GPR[addressC]
+    arrayColection[bin2Dec(GPR[addressA])][bin2Dec(GPR[addressB])+1] = GPR[addressC]
   end
 
   --3 Addition
@@ -156,7 +160,7 @@ while true do
     if dec < 1 then
       dec = 0
     end
-    
+
     GPR[addressA] = dec2Bin(dec,32)
 
     a = 1
@@ -187,6 +191,7 @@ while true do
   if opCode == '1000' then
     if debugOut then print("Allocation") end
     j = bin2Dec(GPR[addressC])
+    GPR[addressB] = dec2Bin(#arrayColection+1,32)
     arrayColection[#arrayColection+1] = {}
     for i = 1, j do
       arrayColection[#arrayColection][j]=Z32
@@ -196,7 +201,7 @@ while true do
   --9 Abandonment
   if opCode == '1001' then
     if debugOut then print("Abandonment") end
-    arrayColection[bin2Dec(GPR[addressC])+1] = {}
+    arrayColection[bin2Dec(GPR[addressC])] = {}
   end
 
   --10 Output
@@ -214,8 +219,8 @@ while true do
 
   --12 Load Program
   if opCode == '1100' then
-    if debugOut then print("Load Program") end
-    arrayColection[1] = arrayColection[bin2Dec(GPR[addressB])+1]
+    if true then print("Load Program " .. bin2Dec(GPR[addressB]) .. " " .. bin2Dec(GPR[addressC])) end
+    arrayColection[0] = arrayColection[bin2Dec(GPR[addressB])]
     iFinger =bin2Dec(GPR[addressC])-- + 1
   end
 
@@ -228,13 +233,22 @@ while true do
     GPR[A13] = val13
   end
 
+  if GPR['001'] == nil then
+    a = 1
+  end
+  
+  if bin2Dec(GPR['000']) == 1414 then
+    a = 1
+  end
+  
+
   iFinger = iFinger + 1
 
-  if arrayColection[1] == nil then 
+  if arrayColection[0] == nil then 
     break 
   end
 
-  if iFinger > #arrayColection[1] then 
+  if iFinger > #arrayColection[0] then 
     break
   end
 
