@@ -75,22 +75,23 @@ function loadUM(mFileName)
   fHandle:seek("set", current)        -- restore position
 
   local allBits = {}
-  for i = 1, (size/32) do
+  for i = 1, (size/4) do
     local b32 = {}
     --for b8 = 1, 4 do 
     fContent = fHandle:read(1)
-    b32[1] = dec2Bin(string.byte(fContent))--:reverse()
+    b32[1] = dec2Bin(string.byte(fContent))
     fContent = fHandle:read(1)
-    b32[2] = dec2Bin(string.byte(fContent))--:reverse()
+    b32[2] = dec2Bin(string.byte(fContent))
     fContent = fHandle:read(1)
-    b32[3] = dec2Bin(string.byte(fContent))--:reverse()
+    b32[3] = dec2Bin(string.byte(fContent))
     fContent = fHandle:read(1)
-    b32[4] = dec2Bin(string.byte(fContent))--:reverse()
+    b32[4] = dec2Bin(string.byte(fContent))
     --end
-    allBits[i] = table.concat(b32)--:reverse()
+    allBits[i] = table.concat(b32)
   end
 
   arrayColection[0] = allBits
+  print("Program size:" .. #arrayColection[0])
   a = 1
 end
 
@@ -114,16 +115,15 @@ while true do
   -- 0 Conditional Move
   if opCode == '0000' then
     if debugOut then print("Conditional Move") end
-    if bin2Dec(GPR[addressC]) ~= 0 then
+    if GPR[addressC] ~= Z32 then
       GPR[addressA] = GPR[addressB]
     end
     a = 1
   end
-  
+
   -- 1 Array Index
   if opCode == '0001' then
     if debugOut then print("Array Index") end
-    al = #arrayColection
     GPR[addressA] = arrayColection[bin2Dec(GPR[addressB])][bin2Dec(GPR[addressC])+1]
     a = 1
   end
@@ -183,7 +183,8 @@ while true do
 
   --7 Halt
   if opCode == '0111' then
-    if debugOut then print("Halt") end
+    print("Halt")
+    print("iFinger:" .. iFinger)
     break
   end
 
@@ -194,8 +195,9 @@ while true do
     GPR[addressB] = dec2Bin(#arrayColection+1,32)
     arrayColection[#arrayColection+1] = {}
     for i = 1, j do
-      arrayColection[#arrayColection][j]=Z32
+      arrayColection[#arrayColection][i]=Z32
     end
+    a = 1
   end
 
   --9 Abandonment
@@ -219,9 +221,9 @@ while true do
 
   --12 Load Program
   if opCode == '1100' then
-    if true then print("Load Program " .. bin2Dec(GPR[addressB]) .. " " .. bin2Dec(GPR[addressC])) end
+    if debugOut then print("Load Program " .. bin2Dec(GPR[addressB]) .. " " .. bin2Dec(GPR[addressC])) end
     arrayColection[0] = arrayColection[bin2Dec(GPR[addressB])]
-    iFinger =bin2Dec(GPR[addressC])-- + 1
+    iFinger = bin2Dec(GPR[addressC])
   end
 
   --13 Orthography
@@ -233,22 +235,15 @@ while true do
     GPR[A13] = val13
   end
 
-  if GPR['001'] == nil then
-    a = 1
-  end
-  
-  if bin2Dec(GPR['000']) == 1414 then
-    a = 1
-  end
-  
-
   iFinger = iFinger + 1
 
   if arrayColection[0] == nil then 
+    print("Program array is nil")
     break 
   end
 
   if iFinger > #arrayColection[0] then 
+    print("Stoped unexpected EOF")
     break
   end
 
