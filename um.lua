@@ -98,10 +98,12 @@ end
 
 loadUM(arg[1])
 
-local opCode = 0
-local addressA = 0
-local addressB = 0
-local addressC = 0
+local opCode
+local addressA
+local addressB
+local addressC
+
+local outputSpy =''
 
 while true do
   cur32bit = arrayColection[0][iFinger]
@@ -115,6 +117,9 @@ while true do
   -- 0 Conditional Move
   if opCode == '0000' then
     if debugOut then print("Conditional Move") end
+    if outputSpy:find('aliasing') then
+--      GPR[addressA] = GPR[addressB]
+    end
     if GPR[addressC] ~= Z32 then
       GPR[addressA] = GPR[addressB]
     end
@@ -195,7 +200,7 @@ while true do
     GPR[addressB] = dec2Bin(#arrayColection+1,32)
     arrayColection[#arrayColection+1] = {}
     for i = 1, j do
-      arrayColection[#arrayColection][i]=Z32
+      arrayColection[#arrayColection][i] = Z32
     end
     a = 1
   end
@@ -203,37 +208,64 @@ while true do
   --9 Abandonment
   if opCode == '1001' then
     if debugOut then print("Abandonment") end
-    arrayColection[bin2Dec(GPR[addressC])] = {}
+    arrayColection[bin2Dec(GPR[addressC])] = {'Abandoned'}
   end
 
   --10 Output
   if opCode == '1010' then
     --   if debugOut then print("Output") end
     io.write(string.char(bin2Dec(GPR[addressC])))
+    outputSpy = outputSpy .. string.char(bin2Dec(GPR[addressC]))
+    if outputSpy:sub(#outputSpy,#outputSpy) == '\n' then
+      a = 1
+    end
+    if outputSpy:find('aliasing') then
+      a = 1
+    end
   end
 
   --11 Input
   if opCode == '1011' then
     if debugOut then print("Input") end
     mChar = io.read(1)
-    GPR[addressC] = dec2Bin(string.byte(mChar),32)
+    if mChar:find('\n') then
+      GPR[addressC] = '11111111111111111111111111111111'
+    else
+      GPR[addressC] = dec2Bin(string.byte(mChar),32)
+    end
   end
 
   --12 Load Program
   if opCode == '1100' then
     if debugOut then print("Load Program " .. bin2Dec(GPR[addressB]) .. " " .. bin2Dec(GPR[addressC])) end
-    arrayColection[0] = arrayColection[bin2Dec(GPR[addressB])]
+    holdArray = arrayColection[bin2Dec(GPR[addressB])]
+    arrayColection[0] = {}
+
+  for i = 1, #holdArray do
+    arrayColection[0][i] = holdArray[i]
+  end
+  
     iFinger = bin2Dec(GPR[addressC])
+    holdArray = nil
   end
 
   --13 Orthography
   if opCode == '1101' then
-    if debugOut then print("13 Orthography") end
+    --if debugOut then print("13 Orthography") end
     A13 = cur32bit:sub(5,7)
     val13 = cur32bit:sub(8,32)
     val13 = zPad(val13,32,true)
     GPR[A13] = val13
   end
+
+  if GPR['000'] == nil or GPR['001'] == nil or GPR['010'] == nil or GPR['011'] == nil or GPR['100'] == nil or GPR['101'] == nil or GPR['110'] == nil or GPR['111'] == nil then
+    a = 1
+  end
+
+  if arrayColection[0] == nil then
+    a = 1
+  end
+
 
   iFinger = iFinger + 1
 
