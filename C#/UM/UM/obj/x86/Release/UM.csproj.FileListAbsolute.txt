@@ -1,0 +1,3 @@
+/home/aecium/workspace/ICFP2006/C#/UM/UM/bin/Release/UM.exe
+/home/aecium/workspace/ICFP2006/C#/UM/UM/obj/x86/Release/UM.csproj.CoreCompileInputs.cache
+/home/aecium/workspace/ICFP2006/C#/UM/UM/obj/x86/Release/UM.exe
