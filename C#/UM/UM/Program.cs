@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
@@ -14,8 +13,8 @@ namespace UM
 		static List<List<uint>> arrayCollection = new List<List<uint>>();
 		static int iFinger = 0;
 
-		static String bits;
-		static String opCode;
+		static uint bits;
+		static uint opCode;
 		static uint regA;
 		static uint regB;
 		static uint regC;
@@ -34,7 +33,7 @@ namespace UM
 			arrayCollection.Add(new List<uint>());
 			if (args.Length < 1)
 			{
-				path = "/home/aecium/workspace/ICFP2006/um/codex.umz";
+				path = "/home/aecium/workspace/ICFP2006/um/sandmark.umz";
 			}
 			else
 			{
@@ -62,70 +61,70 @@ namespace UM
 
 			while (run)
 			{
-				bits = Convert.ToString(arrayCollection[0][iFinger], 2).PadLeft(32).Replace(' ', '0');
-				opCode = bits.Substring(0, 4);
-				regA = (uint)bin2Dec(bits.Substring(23, 3));
-				regB = (uint)bin2Dec(bits.Substring(26, 3));
-				regC = (uint)bin2Dec(bits.Substring(29, 3));
+				bits = arrayCollection[0][iFinger];
+				opCode = bits >> 28;
+				regA = (bits << 23) >> 29;
+				regB = (bits << 26) >> 29;
+				regC = (bits << 29) >> 29;
 
 				switch (opCode)
 				{
 					// 0 Conditional Move
-					case "0000":
+					case 0:
 						conditionalMove();
 						break;
 					// 1 Array Index
-					case "0001":
+					case 1:
 						arrayIndex();
 						break;
 					// 2 Array Amendment
-					case "0010":
+					case 2:
 						amendment();
 						break;
 					// 3 Addition
-					case "0011":
+					case 3:
 						addition();
 						break;
 					// 4 Multiplication
-					case "0100":
+					case 4:
 						multiplication();
 						break;
 					// 5 Division
-					case "0101":
+					case 5:
 						division();
 						break;
 					// 6 Not And
-					case "0110":
+					case 6:
 						notAnd();
 						break;
 					// 7 Halt
-					case "0111":
+					case 7:
 						//Console.Out.WriteLine("Halt");
 						run = false;
 						break;
 					// 8 Allocation
-					case "1000":
+					case 8:
 						allocation();
 						break;
 					// 9 Abandonment
-					case "1001":
+					case 9:
 						//Console.Out.WriteLine("Abandonment");
 						abandonment();
 						break;
-					// 10 Output
-					case "1010":
+					// 10 Output 
+					case 10:
 						output();
 						break;
 					// 11 Input
-					case "1011":
+					case 11:
 						input();
 						break;
 					// 12 Load Program
-					case "1100":
+					case 12:
 						loadProgram();
 						break;
 					// 13 Orthography
-					case "1101":
+					case 13:
 						orthopraphy();
 						break;
 				}
@@ -250,17 +249,12 @@ namespace UM
 		private static void orthopraphy()
 		{
 			//Console.Out.WriteLine("Orthography");
-			A13 = bin2Dec(bits.Substring(4, 3));
-			val13 = bin2Dec(bits.Substring(7, 25));
+			A13 =  (bits << 4) >> 29;
+			val13 =  (bits << 7) >> 7;
 			GPR[A13] = val13;
 			////Console.Out.WriteLine(A13 + " " + val13);
 		}
-
-		private static uint bin2Dec(String bin)
-		{
-			return Convert.ToUInt32(bin, 2);
-		}
-
+              
 		private static long byteAsULong(byte b)
 		{
 			return ((long)b) & 0x00000000000000FFL;
