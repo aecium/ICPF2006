@@ -24,16 +24,17 @@ namespace UM
 		static int arrayColectionSize = 0;
 		static char[] inputChar;
 		static String inputString = "";
-
+		static FileStream outFile;
+		static uint outByte;
 
 		public static void Main(string[] args)
 		{
 
-
+            
 			arrayCollection.Add(new List<uint>());
 			if (args.Length < 1)
 			{
-				path = "/home/aecium/workspace/ICFP2006/um/sandmark.umz";
+				path = "../Release/umix.um";//"/home/aecium/workspace/ICFP2006/um/sandmark.umz";
 			}
 			else
 			{
@@ -43,6 +44,7 @@ namespace UM
 			try
 			{
 				tBytes = File.ReadAllBytes(path);
+				outFile = File.Open("output.txt",FileMode.Create);
 			}
 			catch (IOException e)
 			{
@@ -161,7 +163,10 @@ namespace UM
 
 		private static void output()
 		{
-			Console.Write((char)GPR[regC]);
+			outByte = (GPR[regC] <<  24) >> 24;
+			Console.Write((char)outByte);
+			outFile.WriteByte((byte)outByte);
+	;
 		}
 
 		private static void conditionalMove()
@@ -233,6 +238,12 @@ namespace UM
 			val13 = (bits << 7) >> 7;
 			GPR[A13] = val13;
 		}
+
+		public static UInt32 ReverseBytes(UInt32 value)
+        {
+            return (value & 0x000000FFU) << 24 | (value & 0x0000FF00U) << 8 |
+                (value & 0x00FF0000U) >> 8 | (value & 0xFF000000U) >> 24;
+        }
 
 		private static long byteAsULong(byte b)
 		{
