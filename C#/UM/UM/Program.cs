@@ -26,11 +26,12 @@ namespace UM
 		static String inputString = "";
 		static FileStream outFile;
 		static uint outByte;
+		static List<String> cmdHistory = new List<String>();
 
 		public static void Main(string[] args)
 		{
 
-            
+
 			arrayCollection.Add(new List<uint>());
 			if (args.Length < 1)
 			{
@@ -44,7 +45,7 @@ namespace UM
 			try
 			{
 				tBytes = File.ReadAllBytes(path);
-				outFile = File.Open("output.txt",FileMode.Create);
+				outFile = File.Open("output.txt", FileMode.Create);
 			}
 			catch (IOException e)
 			{
@@ -136,37 +137,32 @@ namespace UM
 		private static void input()
 		{
 
-			GPR[regC] = Console.ReadKey().KeyChar;
-			//if (inputString == "")
-			//{
-			//	inputString = Console.ReadLine();
-			//	//inputString = inputString + (char)13;
-			//}
-			//else
-			//{
+			//GPR[regC] = Console.ReadKey().KeyChar;
+			if (inputString == "")
+			{
+				inputString = Console.ReadLine();
+				inputString = inputString + '\n';
+				cmdHistory.Add(inputString);
+			}
 
-			//	inputChar = inputString.Substring(0, 1).ToCharArray();
-			//	inputString = inputString.Substring(1,inputString.Length-1);
-			//	String endChar = inputString.Substring(inputString.Length - 1, 1); 
-			//	if (inputChar[0] == '@')
-			//	{
-			//		GPR[regC] = 4294967295;
-			//		inputString = "";
-			//	}
-			//	else
-			//	{
-			//		GPR[regC] = (uint)inputChar[0];
-			//	}
-			//}
+			if (inputString.Length > 0)
+			{
+
+				inputChar = inputString.Substring(0, 1).ToCharArray();
+				inputString = inputString.Substring(1, inputString.Length - 1);
+
+				GPR[regC] = (uint)inputChar[0];
+
+			}
 
 		}
 
 		private static void output()
 		{
-			outByte = (GPR[regC] <<  24) >> 24;
+			outByte = (GPR[regC] << 24) >> 24;
 			Console.Write((char)outByte);
 			outFile.WriteByte((byte)outByte);
-	;
+			;
 		}
 
 		private static void conditionalMove()
@@ -240,10 +236,10 @@ namespace UM
 		}
 
 		public static UInt32 ReverseBytes(UInt32 value)
-        {
-            return (value & 0x000000FFU) << 24 | (value & 0x0000FF00U) << 8 |
-                (value & 0x00FF0000U) >> 8 | (value & 0xFF000000U) >> 24;
-        }
+		{
+			return (value & 0x000000FFU) << 24 | (value & 0x0000FF00U) << 8 |
+				(value & 0x00FF0000U) >> 8 | (value & 0xFF000000U) >> 24;
+		}
 
 		private static long byteAsULong(byte b)
 		{

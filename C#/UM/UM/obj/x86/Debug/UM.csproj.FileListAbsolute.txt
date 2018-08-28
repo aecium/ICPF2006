@@ -3,3 +3,4 @@
 /home/aecium/workspace/ICFP2006/C#/UM/UM/obj/x86/Debug/UM.csproj.CoreCompileInputs.cache
 /home/aecium/workspace/ICFP2006/C#/UM/UM/obj/x86/Debug/UM.exe
 /home/aecium/workspace/ICFP2006/C#/UM/UM/obj/x86/Debug/UM.pdb
+/home/aecium/workspace/ICFP2006/C#/UM/UM/obj/x86/Debug/UM.csprojResolveAssemblyReference.cache
