@@ -172,8 +172,10 @@ namespace UM
 				}
 				else
 				{
-					if (inputKey.Key == ConsoleKey.Backspace){
-						
+					if (inputKey.Key == ConsoleKey.Backspace && inputString.Length > 0 && Console.CursorLeft >= 2){
+						inputString = inputString.Substring(0, inputString.Length - 1);
+					} else if (inputKey.Key == ConsoleKey.Backspace) {
+						Console.SetCursorPosition(2, Console.BufferHeight - 1);
 					}
 
 					if ((char)inputKey.KeyChar == '\n')
@@ -181,7 +183,10 @@ namespace UM
 						getMoreInput = false;
 						cmdHistory.Insert(1,inputString);
 					}
-					inputString = inputString + (char)inputKey.KeyChar;
+					if (!((char)inputKey.KeyChar == 0))
+					{
+						inputString = inputString + (char)inputKey.KeyChar;
+					}
 				}
 			}
             
