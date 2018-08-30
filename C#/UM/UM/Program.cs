@@ -22,15 +22,19 @@ namespace UM
 		static uint val13;
 		static Boolean run = true;
 		static int arrayColectionSize = 0;
-		static char[] inputChar;
+		static ConsoleKeyInfo inputKey;
+		static char inputChar;
 		static String inputString = "";
 		static FileStream outFile;
 		static uint outByte;
+		static bool getMoreInput = true;
 		static List<String> cmdHistory = new List<String>();
+		static int cmdHistoryLocation = 0;
+        
 
 		public static void Main(string[] args)
 		{
-
+			cmdHistory.Add("");
 
 			arrayCollection.Add(new List<uint>());
 			if (args.Length < 1)
@@ -133,29 +137,70 @@ namespace UM
 
 			}
 		}
-
+        
 		private static void input()
 		{
-
-			//GPR[regC] = Console.ReadKey().KeyChar;
-			if (inputString == "")
+        
+			while (getMoreInput)
 			{
-				inputString = Console.ReadLine();
-				inputString = inputString + '\n';
-				cmdHistory.Add(inputString);
+				inputKey = Console.ReadKey();
+                          
+				if (inputKey.Key == ConsoleKey.UpArrow || inputKey.Key == ConsoleKey.DownArrow)
+				{
+					if (inputKey.Key == ConsoleKey.UpArrow)
+					{
+						if (cmdHistoryLocation < cmdHistory.Count - 1)
+						{
+							cmdHistoryLocation++;
+						}
+					}
+					else
+					{
+						cmdHistoryLocation--;
+						if (cmdHistoryLocation < 0)
+						{
+							cmdHistoryLocation = 0;
+						}
+					}
+
+					inputString = cmdHistory[cmdHistoryLocation];
+					Console.SetCursorPosition(0, Console.BufferHeight-1);
+					Console.Write("                                         ");
+					Console.SetCursorPosition(0, Console.BufferHeight - 1);
+					Console.Write("% "+ inputString);
+
+				}
+				else
+				{
+					if (inputKey.Key == ConsoleKey.Backspace){
+						
+					}
+
+					if ((char)inputKey.KeyChar == '\n')
+					{
+						getMoreInput = false;
+						cmdHistory.Insert(1,inputString);
+					}
+					inputString = inputString + (char)inputKey.KeyChar;
+				}
 			}
-
-			if (inputString.Length > 0)
+            
+			if (!getMoreInput)
 			{
 
-				inputChar = inputString.Substring(0, 1).ToCharArray();
+				inputChar = inputString.Substring(0, 1).ToCharArray()[0];
 				inputString = inputString.Substring(1, inputString.Length - 1);
 
-				GPR[regC] = (uint)inputChar[0];
+				GPR[regC] = (uint)inputChar;
+				if (inputChar == '\n')
+				{
+					getMoreInput = true;
+				}
 
 			}
 
 		}
+
 
 		private static void output()
 		{
