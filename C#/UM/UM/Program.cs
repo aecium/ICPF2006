@@ -31,7 +31,7 @@ namespace UM
 		static List<String> cmdHistory = new List<String>();
 		static int cmdHistoryLocation = 0;
 		static List<String> inputLines = new List<String>();
-        
+
 
 		public static void Main(string[] args)
 		{
@@ -138,10 +138,10 @@ namespace UM
 
 			}
 		}
-        
+
 		private static void input()
 		{
-        
+
 			while (getMoreInput)
 			{
 				if (inputLines.Count > 0)
@@ -153,7 +153,7 @@ namespace UM
 				else
 				{
 					inputKey = Console.ReadKey();
-				}    
+				}
 				if (inputKey.Key == ConsoleKey.UpArrow || inputKey.Key == ConsoleKey.DownArrow)
 				{
 					if (inputKey.Key == ConsoleKey.UpArrow)
@@ -178,29 +178,37 @@ namespace UM
 				}
 				else
 				{
-					if (inputKey.Key == ConsoleKey.F2){
-						if (File.Exists("./input.txt")){
+					if (inputKey.Key == ConsoleKey.F2)
+					{
+						if (File.Exists("./input.txt"))
+						{
 							StreamReader file = new StreamReader("./input.txt");
 							String line;
-							while((line = file.ReadLine()) != null){
+							while ((line = file.ReadLine()) != null)
+							{
 								inputLines.Add(line);
 							}
-						} else {
+						}
+						else
+						{
 							Console.Write("No input.text to read. go make one.\n% ");
 						}
 
 					}
 
-					if (inputKey.Key == ConsoleKey.Backspace && inputString.Length > 0 && Console.CursorLeft >= 2){
+					if (inputKey.Key == ConsoleKey.Backspace && inputString.Length > 0 && Console.CursorLeft >= 2)
+					{
 						inputString = inputString.Substring(0, inputString.Length - 1);
-					} else if (inputKey.Key == ConsoleKey.Backspace) {
+					}
+					else if (inputKey.Key == ConsoleKey.Backspace)
+					{
 						Console.SetCursorPosition(2, Console.BufferHeight - 1);
 					}
 
 					if ((char)inputKey.KeyChar == '\n')
 					{
 						getMoreInput = false;
-						cmdHistory.Insert(1,inputString);
+						cmdHistory.Insert(1, inputString);
 						cmdHistoryLocation = 0;
 					}
 					if (!((char)inputKey.KeyChar == 0))
@@ -208,8 +216,9 @@ namespace UM
 						inputString = inputString + (char)inputKey.KeyChar;
 					}
 				}
+				inputKey = default(ConsoleKeyInfo);
 			}
-            
+
 			if (!getMoreInput)
 			{
 
@@ -223,7 +232,7 @@ namespace UM
 				}
 
 			}
-			inputKey = new ConsoleKeyInfo();
+
 		}
 
 
@@ -305,12 +314,13 @@ namespace UM
 			GPR[A13] = val13;
 		}
 
-		private static void injectInput(String inpt){
+		private static void injectInput(String inpt)
+		{
 			inputString = inpt;
 			Console.SetCursorPosition(0, Console.BufferHeight - 1);
-            Console.Write("                                         ");
-            Console.SetCursorPosition(0, Console.BufferHeight - 1);
-            Console.Write("% " + inputString);
+			Console.Write("                                         ");
+			Console.SetCursorPosition(0, Console.BufferHeight - 1);
+			Console.Write("% " + inputString);
 		}
 
 		public static UInt32 ReverseBytes(UInt32 value)

@@ -1,3 +1,8 @@
+guest
+mail
+cd code
+rm hack.bas
+/bin/umodem hack.bas STOP
 V        REM  +------------------------------------------------+
 X        REM  | HACK.BAS      (c) 19100   fr33 v4r14bl3z       |
 XV       REM  |                                                |
@@ -95,3 +100,35 @@ CDLXX    REM
 CDLXXV   REM  passwords often take the form
 CDLXXX   REM    dictwordDD
 CDLXXXV  REM  where DD is a two-digit decimal number. try these next:
+CDXC     i = I
+CDXCV    DIM ix AS INTEGER
+D        DIM iy AS INTEGER
+DI       DIM nums(X) AS STRING
+DII      nums(I) = "0"
+DIII     nums(II) = "1"
+DIV      nums(III) = "2"
+DV       nums(IV) = "3"
+DVI      nums(V) = "4"
+DVII     nums(VI) = "5"
+DVIII    nums(VII) = "6"
+DIX      nums(VIII) = "7"
+DX       nums(IX) = "8"
+DXI      nums(X) = "9"
+DXII     i = i + I
+DXIII    iy = I
+DXIV     ix = I
+DXV      IF i > pwdcount THEN GOTO DXXVI
+DXVI     PRINT "trying" + words(i) + nums(iy) + nums(ix)
+DXVII    IF CHECKPASS(username,words(i) + nums(iy) + nums(ix)) THEN GOTO DXXII
+DXVIII   ix = ix + I
+DXIX     IF ix < X THEN GOTO DXIII
+DXX      iy = iy + I
+DXXI     IF iy < X THEN GOTO DXII
+DXXII    PRINT "found match!! for user " + username + CHR(X) + i + " " +ix + " " + iy
+DXXIII   PRINT "password: " + words(i) + nums(ix) + nums(iy) + CHR(X)
+DXXIV    END
+DXXV     PRINT "no match found"
+DXXVI    END
+STOP
+/bin/qbasic hack.bas
+hack.exe ftd
